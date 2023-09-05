@@ -1,3 +1,8 @@
+body{
+    background-image: url('https://c.wallhere.com/photos/cd/94/Pok_mon_pixel_art-89641.png!d');
+    background-size:cover;
+    background-repeat: no-repeat;
+}
 form {
     width: 200px;
     margin: 20px auto;
@@ -6,6 +11,7 @@ form {
 input {
     width: 100%;
     padding: 10px;
+    margin-top: 40px;
 }
 
 .poke-card {
@@ -18,7 +24,7 @@ input {
     text-align: center;
     padding: 10px;
     margin: 0 auto;
-    background-color: #FFF;
+    background-color: #ffffff;
     border: 1px solid black;
 }
 
@@ -59,4 +65,23 @@ input {
 .poke-img {
     width: 180px;
     border-radius: 50%;
+}
+h1{
+    text-align: center;
+    color: rgb(0, 0, 0);
+}
+
+h2{
+    padding-left: 60px;
+    padding-top: 60px;
+    text-decoration: dashed;
+    font-size: bold;
+    color: rgb(0, 0, 0);
+
+}
+
+.primera{
+    width: 850px;
+    height: 900px;
+    padding: 10px 60px 60px 60px;
 }

@@ -1,11 +1,17 @@
-const pokeCard = document.querySelector('[data-poke-card]');
-const pokeName = document.querySelector('[data-poke-name]');
-const pokeImg = document.querySelector('[data-poke-img]');
-const pokeImgContainer = document.querySelector('[data-poke-img-container]');
-const pokeId = document.querySelector('[data-poke-id]');
-const pokeTypes = document.querySelector('[data-poke-types]');
-const pokeStats = document.querySelector('[data-poke-stats]');
+//-----------------------------------------------------------------------------------------------
+// Selecciono elementos del HTML por su ID, los asigno y los guardo en variables
+//-----------------------------------------------------------------------------------------------
+const pokeCard = document.querySelector('#data-poke-card');
+const pokeName = document.querySelector('#data-poke-name');
+const pokeImg = document.querySelector('#data-poke-img');
+const pokeImgContainer = document.querySelector('#data-poke-img-container');
+const pokeId = document.querySelector('#data-poke-id');
+const pokeTypes = document.querySelector('#data-poke-types');
+const pokeStats = document.querySelector('#data-poke-stats');
 
+//-----------------------------------------------------------------------------------------------
+// Almacene cada tipo de pokemon en un color que los represente
+//-----------------------------------------------------------------------------------------------
 const typeColors = {
     electric: '#FFEA70',
     normal: '#B09398',
@@ -28,22 +34,55 @@ const typeColors = {
 
 const btn = document.querySelector("#btn");
 
+//-----------------------------------------------------------------------------------------------
+// Muestro un mensaje de bienvenida a la pagina
+//-----------------------------------------------------------------------------------------------
+Swal.fire('Bienvenidos al laboratorio de Pokemon')
+
+// Agrego un evento "submit" al formulario
 btn.addEventListener("submit", async function(evt) {
-    evt.preventDefault();
-    await getPokemon();
+    evt.preventDefault(); // Prevengo el comportamiento del formulario
+    await getPokemon(); // Llamo a la función para buscar un Pokémon
 });
 
+//-----------------------------------------------------------------------------------------------
+// Función para buscar un Pokémon por ID o nombre
+//-----------------------------------------------------------------------------------------------
 async function getPokemon(id) {
     try {
         const { value } = document.querySelector('[name="pokemon"]');
         const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${value.toLowerCase()}`);
         const data = await res.json();
-        renderPokemonData(data);
+        renderPokemonData(data); // Mostrar los datos del Pokémon
+        localStorage.setItem('lastSearchedPokemon', value.toLowerCase()); // Que quede registrado el ultimo pokemon buscado
     } catch (e) {
-        renderNotFound();
+        renderNotFound(); // Mostrar el mensaje de "No encontrado"
     }
 }
 
+//-----------------------------------------------------------------------------------------------
+// Función de error para cuando se escribe mal un pokemon le avise al usuario
+//-----------------------------------------------------------------------------------------------
+function renderNotFound() {
+    pokeName.textContent = 'No encontrado';
+    pokeImg.setAttribute('src', './img/cruz.png');
+    pokeImg.style.background =  '#fff';
+    pokeTypes.innerHTML = '';
+    pokeStats.innerHTML = '';
+    pokeId.textContent = '';
+    Swal.fire({
+        title: 'Pokemon inexistente',
+        text: 'Revise que su ID o nombre estén escritos correctamente',
+        imageUrl: 'https://clipart-library.com/images_k/pokemon-transparent/pokemon-transparent-24.png',
+        imageWidth: 400,
+        imageHeight: 200,
+        imageAlt: 'poke-shadow',
+    })
+}
+
+//-----------------------------------------------------------------------------------------------
+// Función para mostrar los datos de un Pokémon
+//-----------------------------------------------------------------------------------------------
 function renderPokemonData(data) {
     const sprite =  data.sprites.front_default;
     const { stats, types } = data;
@@ -51,11 +90,14 @@ function renderPokemonData(data) {
     pokeName.textContent = data.name;
     pokeImg.setAttribute('src', sprite);
     pokeId.textContent = `Nº ${data.id}`;
-    setCardColor(types);
-    renderPokemonTypes(types);
-    renderPokemonStats(stats);
+    setCardColor(types); // Establecer el color de la tarjeta según el tipo de Pokémon
+    renderPokemonTypes(types); // Mostrar los tipos de Pokémon
+    renderPokemonStats(stats); // Mostrar las estadísticas del Pokémon
 }
 
+//-----------------------------------------------------------------------------------------------
+// Función para establecer el color de la tarjeta según el tipo de Pokémon
+//-----------------------------------------------------------------------------------------------
 function setCardColor(types) {
     const colorOne = typeColors[types[0].type.name];
     const colorTwo = types[1] ? typeColors[types[1].type.name] : typeColors.default;
@@ -63,6 +105,9 @@ function setCardColor(types) {
     pokeImg.style.backgroundSize = ' 5px 5px';
 }
 
+//-----------------------------------------------------------------------------------------------
+// Función para mostrar los tipos de Pokémon
+//-----------------------------------------------------------------------------------------------
 function renderPokemonTypes(types) {
     pokeTypes.innerHTML = '';
     types.forEach(type => {
@@ -73,6 +118,9 @@ function renderPokemonTypes(types) {
     });
 }
 
+//-----------------------------------------------------------------------------------------------
+// Función para mostrar las estadísticas del Pokémon
+//-----------------------------------------------------------------------------------------------
 function renderPokemonStats(stats) {
     pokeStats.innerHTML = '';
     stats.forEach(stat => {
@@ -87,39 +135,19 @@ function renderPokemonStats(stats) {
     });
 }
 
-function renderNotFound() {
-    pokeName.textContent = 'No encontrado';
-    pokeImg.setAttribute('src', 'poke-shadow.png');
-    pokeImg.style.background =  '#fff';
-    pokeTypes.innerHTML = '';
-    pokeStats.innerHTML = '';
-    pokeId.textContent = '';
+//-----------------------------------------------------------------------------------------------
+// Quise agregar un detalle de que quede registrado el ultimo pokemon buscado, asi utilizaba localstorage, por esa razon esta agregado a lo ultimo
+//-----------------------------------------------------------------------------------------------
+const lastSearchedPokemon = localStorage.getItem('lastSearchedPokemon');
+
+// Si se encontró un último Pokémon buscado, mostrarlo en el formulario
+if (lastSearchedPokemon) {
+    document.querySelector('[name="pokemon"]').value = lastSearchedPokemon;
 }
 
+// Agregar un evento "submit" al formulario
+btn.addEventListener("submit", async function(evt) {
+    evt.preventDefault(); 
+    await getPokemon();
+});
 
-
-
-
-
-
-
-
-
-
-
-
-
-function render(pokemon) {
-    //console.log(pokemon)
-    document.querySelector('h1').textContent = pokemon.name;
-    document.querySelector('#imagen').setAttribute('src', pokemon.sprites.front_shiny)
-
-
-}
-
-async function init() {
-    const pokemon = await getPokemon(150);
-    render(pokemon);
-}
-
-init();
